@@ -1,0 +1,19 @@
+name: azequiscope-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - geopandas
+  - pandas
+  - matplotlib
+  - folium
+  - requests
+  - jupyterlab
+  - notebook
+  - ipykernel
+  - rtree
+  - pyproj
+  - fiona
+  - shapely
+  - pip
+
