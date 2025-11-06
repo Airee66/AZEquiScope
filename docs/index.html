@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AZEquiScope — Maricopa Choropleth Map</title>
+    <style>
+      body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+      header { padding: 1rem; background: #f7f7f7; border-bottom: 1px solid #e1e1e1; }
+      main { height: calc(100vh - 72px); }
+      .note { padding: 0.5rem 1rem; color: #444; }
+      iframe { width: 100%; height: 100%; border: 0; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2 style="margin:0;">AZEquiScope — Maricopa Choropleth Map</h2>
+      <div class="note">If your interactive map file is not named <code>map.html</code>, copy or rename it to <code>docs/map.html</code> (or edit this page to point to your filename).</div>
+    </header>
+    <main>
+      <!-- The iframe loads the interactive map HTML file. Place your map HTML in docs/map.html -->
+      <iframe id="map-frame" src="map.html" title="Maricopa Choropleth Map"></iframe>
+    </main>
+  </body>
+</html>
