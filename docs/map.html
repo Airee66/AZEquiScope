@@ -43,6 +43,156 @@
                 left:0;
                 }
             </style>
+            
+            <style>
+                .weight-control-panel {
+                    background: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    min-width: 280px;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                }
+                .weight-control-panel h3 {
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #333;
+                }
+                .weight-control {
+                    margin-bottom: 15px;
+                }
+                .weight-control label {
+                    display: block;
+                    font-size: 13px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                    color: #555;
+                }
+                .weight-control-buttons {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .weight-button {
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    border: 2px solid #ddd;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    background: #f8f9fa;
+                    color: #333;
+                    min-width: 40px;
+                    transition: all 0.2s;
+                }
+                .weight-button:hover {
+                    background: #e9ecef;
+                    border-color: #0066cc;
+                }
+                .weight-button:active {
+                    background: #0066cc;
+                    color: white;
+                    border-color: #0066cc;
+                }
+                .weight-button.decrement {
+                    border-radius: 4px 0 0 4px;
+                }
+                .weight-button.increment {
+                    border-radius: 0 4px 4px 0;
+                }
+                .weight-value-display {
+                    flex: 1;
+                    text-align: center;
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: #0066cc;
+                    background: #f8f9fa;
+                    border: 2px solid #ddd;
+                    border-left: none;
+                    border-right: none;
+                    min-width: 60px;
+                }
+                .reset-button {
+                    width: 100%;
+                    padding: 8px;
+                    margin-top: 10px;
+                    background: #0066cc;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                }
+                .reset-button:hover {
+                    background: #0052a3;
+                }
+                .total-weight {
+                    margin-top: 10px;
+                    padding-top: 10px;
+                    border-top: 1px solid #ddd;
+                    font-size: 12px;
+                    color: #666;
+                }
+                .total-weight.warning {
+                    color: #d9534f;
+                    font-weight: bold;
+                }
+                .info-section {
+                    margin-top: 15px;
+                    padding: 12px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    border-left: 4px solid #0066cc;
+                    font-size: 12px;
+                    line-height: 1.6;
+                }
+                .info-section h4 {
+                    margin-top: 0;
+                    margin-bottom: 10px;
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: #333;
+                }
+                .info-section ul {
+                    margin: 8px 0;
+                    padding-left: 20px;
+                }
+                .info-section li {
+                    margin-bottom: 6px;
+                    color: #555;
+                }
+                .info-section .formula {
+                    background: white;
+                    padding: 8px;
+                    border-radius: 3px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 11px;
+                    margin-top: 8px;
+                    border: 1px solid #ddd;
+                }
+                .info-toggle {
+                    font-size: 11px;
+                    color: #0066cc;
+                    cursor: pointer;
+                    text-decoration: underline;
+                    margin-top: 5px;
+                    display: inline-block;
+                }
+                .info-toggle:hover {
+                    color: #0052a3;
+                }
+                .info-content {
+                    display: none;
+                    margin-top: 10px;
+                }
+                .info-content.show {
+                    display: block;
+                }
+            </style>
 
             <script>
                 L_NO_TOUCH = false;
@@ -86,6 +236,110 @@
 </head>
 <body>
     
+    <!-- Weight Control Panel -->
+    <div id="weight-control-panel" class="weight-control-panel" style="display: none;">
+        <h3>Adjust Need Score Weights</h3>
+        
+        <div class="weight-control">
+            <label for="weight-income">
+                Income (Lower = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('income-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="income-info">
+                <strong>Median Household Income</strong> from U.S. Census Bureau. Lower income areas have higher healthcare need. The value is normalized (0-1 scale) where 1 represents the lowest income areas (highest need).
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="income" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-income-value">0.20</div>
+                <button class="weight-button increment" data-weight="income" data-action="increment">+</button>
+            </div>
+        </div>
+        
+        <div class="weight-control">
+            <label for="weight-population">
+                Population (Higher = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('population-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="population-info">
+                <strong>Total Population</strong> from U.S. Census Bureau. Areas with higher population density have greater healthcare need due to larger service demand. The value is normalized (0-1 scale) where 1 represents the most populous areas.
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="population" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-population-value">0.20</div>
+                <button class="weight-button increment" data-weight="population" data-action="increment">+</button>
+            </div>
+        </div>
+        
+        <div class="weight-control">
+            <label for="weight-chronic-disease">
+                Chronic Disease (Higher = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('chronic-disease-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="chronic-disease-info">
+                <strong>Chronic Disease Prevalence</strong> from CDC PLACES data. Average of seven chronic conditions: diabetes, high cholesterol, coronary heart disease, asthma, COPD, obesity, and high blood pressure. Higher prevalence indicates greater healthcare need. Normalized to 0-1 scale.
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="chronicDisease" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-chronic-disease-value">0.20</div>
+                <button class="weight-button increment" data-weight="chronicDisease" data-action="increment">+</button>
+            </div>
+        </div>
+        
+        <div class="weight-control">
+            <label for="weight-provider-access">
+                Provider Access (More = Lower Need)
+                <span class="info-toggle" onclick="toggleInfo('provider-access-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="provider-access-info">
+                <strong>Healthcare Provider Count</strong> from NPI (National Provider Identifier) Registry. Total number of healthcare providers (individual and organizational) per ZCTA. More providers mean better access and lower need. The value is normalized and inverted (0-1 scale) where 1 represents areas with the fewest providers (highest need).
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="providerAccess" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-provider-access-value">0.20</div>
+                <button class="weight-button increment" data-weight="providerAccess" data-action="increment">+</button>
+            </div>
+        </div>
+        
+        <div class="weight-control">
+            <label for="weight-insurance-access">
+                Insurance Access (Less = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('insurance-access-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="insurance-access-info">
+                <strong>Uninsured Rate</strong> from CDC PLACES data. Percentage of adults aged 18-64 without health insurance. Higher uninsured rates indicate greater healthcare access barriers and higher need. The value is normalized (0-1 scale) where 1 represents the highest uninsured rates (highest need).
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="insuranceAccess" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-insurance-access-value">0.20</div>
+                <button class="weight-button increment" data-weight="insuranceAccess" data-action="increment">+</button>
+            </div>
+        </div>
+        
+        <div class="total-weight" id="total-weight-display">Total: 1.00</div>
+        <button class="reset-button" id="reset-weights">Reset to Default</button>
+        
+        <div class="info-section">
+            <h4>How Need Score is Calculated</h4>
+            <p>The healthcare need score is a weighted composite of five factors:</p>
+            <ul>
+                <li><strong>Income:</strong> Median household income (inverted - lower income = higher need)</li>
+                <li><strong>Population:</strong> Total population (higher population = higher need)</li>
+                <li><strong>Chronic Disease:</strong> Average prevalence of chronic conditions (diabetes, asthma, COPD, obesity, etc.)</li>
+                <li><strong>Provider Access:</strong> Number of healthcare providers per ZCTA (inverted - more providers = lower need)</li>
+                <li><strong>Insurance Access:</strong> Percentage without health insurance (higher uninsured rate = higher need)</li>
+            </ul>
+            <div class="formula">
+                need_score = (Weight_Income × Z_Income) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_Population × Z_Population) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_ChronicDisease × Z_ChronicDisease) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_ProviderAccess × Z_ProviderAccess) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_InsuranceAccess × Z_InsuranceAccess)
+            </div>
+            <p style="margin-top: 8px; font-size: 11px; color: #666;">
+                <strong>Note:</strong> All variables (Z_ prefix) are normalized to a 0-1 scale. Higher scores indicate greater healthcare need. The map uses quantile classification (5 bins) to assign colors: Green (low need) → Yellow (medium) → Red (high need).
+            </p>
+        </div>
+    </div>
     
             <div class="folium-map" id="map_9c42ff95ad7ee689c0eba5f2489ca809" ></div>
         
@@ -338,5 +592,342 @@
         .attr("y", 21)
         .attr("fill", "black")
         .text("need_score");
+
+    // Weight control functionality
+    (function() {
+        // Store original GeoJSON data and features
+        var originalGeoJsonData = null;
+        var originalFeatures = [];
+        var geoJsonLayer = geo_json_f0b5d1309a3a0ba6b70f78b6a5283998;
+        var featuresExtracted = false;
+        
+        // Function to extract features from the layer
+        function extractFeatures() {
+            if (featuresExtracted) return;
+            originalFeatures = [];
+            geoJsonLayer.eachLayer(function(layer) {
+                if (layer.feature && layer.feature.properties) {
+                    var props = layer.feature.properties;
+                    // Check if Z_ variables exist
+                    if (props.Z_census_B19013_001E !== undefined || 
+                        props.Z_census_B01001_001E !== undefined ||
+                        props.Z_chronic_disease_avg !== undefined) {
+                        originalFeatures.push({
+                            id: layer.feature.id || layer._leaflet_id,
+                            properties: JSON.parse(JSON.stringify(props)),
+                            geometry: layer.feature.geometry,
+                            layer: layer  // Store reference to layer for updates
+                        });
+                    }
+                }
+            });
+            if (originalFeatures.length > 0) {
+                featuresExtracted = true;
+                console.log('Extracted ' + originalFeatures.length + ' features with Z_ variables');
+            }
+        }
+        
+        // Default weights
+        var defaultWeights = {
+            income: 0.2,
+            population: 0.2,
+            chronicDisease: 0.2,
+            providerAccess: 0.2,
+            insuranceAccess: 0.2
+        };
+        
+        var currentWeights = JSON.parse(JSON.stringify(defaultWeights));
+        
+        // Calculate need_score based on weights
+        function calculateNeedScore(properties, weights) {
+            var income = properties.Z_census_B19013_001E || 0;
+            var population = properties.Z_census_B01001_001E || 0;
+            var chronicDisease = properties.Z_chronic_disease_avg || 0;
+            var providerAccess = properties.Z_npi_total_providers || 0;
+            var insuranceAccess = properties.Z_cdc_access2_crudeprev || 0;
+            
+            return (
+                weights.income * income +
+                weights.population * population +
+                weights.chronicDisease * chronicDisease +
+                weights.providerAccess * providerAccess +
+                weights.insuranceAccess * insuranceAccess
+            );
+        }
+        
+        // Calculate quantiles from scores
+        function calculateQuantiles(scores, k) {
+            var sorted = scores.slice().sort(function(a, b) { return a - b; });
+            var quantiles = [];
+            for (var i = 1; i < k; i++) {
+                var index = Math.floor((sorted.length * i) / k);
+                quantiles.push(sorted[index]);
+            }
+            return quantiles;
+        }
+        
+        // Get color for a score based on quantiles
+        // Green (low need) -> Yellow (medium) -> Red (high need)
+        function getColorForScore(score, quantiles, colorScale) {
+            var colorIndex = 0;
+            for (var i = 0; i < quantiles.length; i++) {
+                if (score > quantiles[i]) {
+                    colorIndex = i + 1;
+                } else {
+                    break;
+                }
+            }
+            // Color scheme: Green (low need, index 0) -> Yellow (medium) -> Red (high need, index 4)
+            // 5 quantile bins: green (lowest scores), light green, yellow, red, dark red (highest scores)
+            var colors = ['#2d5016', '#6b9e3e', '#ffeb3b', '#f44336', '#c62828'];
+            // colorIndex 0 = lowest scores (green), colorIndex 4 = highest scores (dark red)
+            return colors[Math.min(colorIndex, colors.length - 1)];
+        }
+        
+        // Update map with new weights
+        function updateMapWithWeights(weights) {
+            // Recalculate need_score for all features
+            var scores = [];
+            var featureScores = {};
+            
+            originalFeatures.forEach(function(feature) {
+                var score = calculateNeedScore(feature.properties, weights);
+                scores.push(score);
+                featureScores[feature.id] = score;
+                // Update properties
+                feature.properties.need_score = score;
+                feature.properties.need_score_fmt = score.toFixed(3);
+            });
+            
+            // Calculate new quantiles (5 bins)
+            var quantiles = calculateQuantiles(scores, 5);
+            var minScore = Math.min.apply(null, scores);
+            var maxScore = Math.max.apply(null, scores);
+            
+            // Update each layer's style
+            originalFeatures.forEach(function(featureData) {
+                if (featureData.layer && featureScores.hasOwnProperty(featureData.id)) {
+                    var score = featureScores[featureData.id];
+                    var color = getColorForScore(score, quantiles, null);
+                    
+                    // Update layer style
+                    featureData.layer.setStyle({
+                        color: 'white',
+                        fillColor: color,
+                        fillOpacity: 0.7,
+                        weight: 1
+                    });
+                    
+                    // Update feature properties
+                    if (featureData.layer.feature) {
+                        featureData.layer.feature.properties.need_score = score;
+                        featureData.layer.feature.properties.need_score_fmt = score.toFixed(3);
+                    }
+                    featureData.properties.need_score = score;
+                    featureData.properties.need_score_fmt = score.toFixed(3);
+                }
+            });
+            
+            // Update legend
+            updateLegend(minScore, maxScore, quantiles);
+        }
+        
+        // Update legend
+        function updateLegend(minScore, maxScore, quantiles) {
+            // Update color scale domain
+            var domain = [minScore].concat(quantiles).concat([maxScore]);
+            color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.color.domain(domain);
+            color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.x.domain([minScore, maxScore]);
+            
+            // Update axis
+            var axisValues = [minScore];
+            for (var i = 0; i < quantiles.length; i++) {
+                axisValues.push(quantiles[i]);
+            }
+            axisValues.push(maxScore);
+            color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.xAxis.tickValues(axisValues);
+            
+            // Redraw legend
+            d3.select('#legend').select('g.key').remove();
+            color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.g = color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.svg.append("g")
+                .attr("class", "key")
+                .attr("fill", "black")
+                .attr("transform", "translate(25,16)");
+            
+            // Color scheme: Green (low need) -> Yellow (medium) -> Red (high need)
+            // Order: lowest scores (green) to highest scores (dark red)
+            var colors = ['#2d5016', '#6b9e3e', '#ffeb3b', '#f44336', '#c62828'];
+            color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.g.selectAll("rect")
+                .data(colors.map(function(d, i) {
+                    return {
+                        x0: i ? color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.x(domain[i]) : color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.x.range()[0],
+                        x1: i < domain.length - 1 ? color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.x(domain[i + 1]) : color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.x.range()[1],
+                        z: d
+                    };
+                }))
+                .enter().append("rect")
+                .attr("height", 40 - 30)
+                .attr("x", function(d) { return d.x0; })
+                .attr("width", function(d) { return d.x1 - d.x0; })
+                .style("fill", function(d) { return d.z; });
+            
+            color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.g.call(color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.xAxis).append("text")
+                .attr("class", "caption")
+                .attr("y", 21)
+                .attr("fill", "black")
+                .text("need_score");
+        }
+        
+        // Update weight display values
+        function updateWeightDisplay() {
+            document.getElementById('weight-income-value').textContent = currentWeights.income.toFixed(2);
+            document.getElementById('weight-population-value').textContent = currentWeights.population.toFixed(2);
+            document.getElementById('weight-chronic-disease-value').textContent = currentWeights.chronicDisease.toFixed(2);
+            document.getElementById('weight-provider-access-value').textContent = currentWeights.providerAccess.toFixed(2);
+            document.getElementById('weight-insurance-access-value').textContent = currentWeights.insuranceAccess.toFixed(2);
+            
+            var total = currentWeights.income + currentWeights.population + currentWeights.chronicDisease + 
+                       currentWeights.providerAccess + currentWeights.insuranceAccess;
+            var totalDisplay = document.getElementById('total-weight-display');
+            totalDisplay.textContent = 'Total: ' + total.toFixed(2);
+            if (Math.abs(total - 1.0) > 0.01) {
+                totalDisplay.classList.add('warning');
+            } else {
+                totalDisplay.classList.remove('warning');
+            }
+        }
+        
+        // Update weight value with constraints
+        function updateWeight(weightName, delta) {
+            var step = 0.05; // Increment/decrement by 0.05
+            var newValue = currentWeights[weightName] + (delta * step);
+            // Clamp between 0 and 1
+            newValue = Math.max(0, Math.min(1, newValue));
+            // Round to 2 decimal places
+            newValue = Math.round(newValue * 100) / 100;
+            currentWeights[weightName] = newValue;
+            updateWeightDisplay();
+            updateMapWithWeights(currentWeights);
+        }
+        
+        // Weight button event handlers
+        document.querySelectorAll('.weight-button').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                var weightName = this.getAttribute('data-weight');
+                var action = this.getAttribute('data-action');
+                var delta = action === 'increment' ? 1 : -1;
+                updateWeight(weightName, delta);
+            });
+        });
+        
+        // Reset button
+        document.getElementById('reset-weights').addEventListener('click', function() {
+            currentWeights = JSON.parse(JSON.stringify(defaultWeights));
+            updateWeightDisplay();
+            updateMapWithWeights(currentWeights);
+        });
+        
+        // Create Leaflet control for weight panel
+        var WeightControl = L.Control.extend({
+            onAdd: function(map) {
+                var panel = document.getElementById('weight-control-panel');
+                panel.style.display = 'block';
+                return panel;
+            },
+            onRemove: function(map) {
+                var panel = document.getElementById('weight-control-panel');
+                panel.style.display = 'none';
+            }
+        });
+        
+        // Add control to map
+        var weightControl = new WeightControl({position: 'topleft'});
+        weightControl.addTo(map_9c42ff95ad7ee689c0eba5f2489ca809);
+        
+        // Toggle info sections
+        function toggleInfo(infoId) {
+            var infoContent = document.getElementById(infoId);
+            if (infoContent) {
+                infoContent.classList.toggle('show');
+            }
+        }
+        // Make toggleInfo available globally
+        window.toggleInfo = toggleInfo;
+        
+        // Initialize weight display
+        updateWeightDisplay();
+        
+        // Apply initial color scheme (red-yellow-green) to the map
+        function applyInitialColorScheme() {
+            if (originalFeatures.length === 0) return;
+            
+            // Get all current need_score values
+            var scores = [];
+            originalFeatures.forEach(function(feature) {
+                if (feature.properties.need_score !== undefined) {
+                    scores.push(feature.properties.need_score);
+                }
+            });
+            
+            if (scores.length === 0) return;
+            
+            // Calculate quantiles
+            var quantiles = calculateQuantiles(scores, 5);
+            var minScore = Math.min.apply(null, scores);
+            var maxScore = Math.max.apply(null, scores);
+            
+            // Update colors for all features
+            originalFeatures.forEach(function(featureData) {
+                if (featureData.layer && featureData.properties.need_score !== undefined) {
+                    var score = featureData.properties.need_score;
+                    var color = getColorForScore(score, quantiles, null);
+                    
+                    // Update layer style
+                    featureData.layer.setStyle({
+                        color: 'white',
+                        fillColor: color,
+                        fillOpacity: 0.7,
+                        weight: 1
+                    });
+                }
+            });
+            
+            // Update legend
+            updateLegend(minScore, maxScore, quantiles);
+        }
+        
+        // Extract features - try multiple times to ensure data is loaded
+        function tryExtractFeatures(attempts) {
+            attempts = attempts || 0;
+            extractFeatures();
+            if (!featuresExtracted && attempts < 10) {
+                setTimeout(function() {
+                    tryExtractFeatures(attempts + 1);
+                }, 200);
+            } else if (featuresExtracted) {
+                console.log('Features successfully extracted');
+                // Apply color scheme once features are extracted
+                setTimeout(function() {
+                    applyInitialColorScheme();
+                }, 100);
+            } else {
+                console.warn('Could not extract features after multiple attempts');
+            }
+        }
+        
+        // Start extracting features
+        tryExtractFeatures();
+        
+        // Also try when map is ready
+        map_9c42ff95ad7ee689c0eba5f2489ca809.whenReady(function() {
+            setTimeout(function() {
+                extractFeatures();
+                // Apply color scheme once features are extracted
+                if (featuresExtracted && originalFeatures.length > 0) {
+                    applyInitialColorScheme();
+                }
+            }, 500);
+        });
+    })();
 </script>
 </html>

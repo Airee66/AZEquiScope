@@ -68,22 +68,53 @@
                     display: block;
                     font-size: 13px;
                     font-weight: 500;
-                    margin-bottom: 5px;
+                    margin-bottom: 8px;
                     color: #555;
                 }
-                .weight-control input[type="range"] {
-                    width: 100%;
-                    margin-bottom: 5px;
-                }
-                .weight-control .value-display {
+                .weight-control-buttons {
                     display: flex;
-                    justify-content: space-between;
-                    font-size: 12px;
-                    color: #666;
+                    align-items: center;
+                    gap: 8px;
                 }
-                .weight-control .value-display span {
+                .weight-button {
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    border: 2px solid #ddd;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    background: #f8f9fa;
+                    color: #333;
+                    min-width: 40px;
+                    transition: all 0.2s;
+                }
+                .weight-button:hover {
+                    background: #e9ecef;
+                    border-color: #0066cc;
+                }
+                .weight-button:active {
+                    background: #0066cc;
+                    color: white;
+                    border-color: #0066cc;
+                }
+                .weight-button.decrement {
+                    border-radius: 4px 0 0 4px;
+                }
+                .weight-button.increment {
+                    border-radius: 0 4px 4px 0;
+                }
+                .weight-value-display {
+                    flex: 1;
+                    text-align: center;
+                    padding: 6px 12px;
+                    font-size: 14px;
                     font-weight: bold;
                     color: #0066cc;
+                    background: #f8f9fa;
+                    border: 2px solid #ddd;
+                    border-left: none;
+                    border-right: none;
+                    min-width: 60px;
                 }
                 .reset-button {
                     width: 100%;
@@ -109,6 +140,57 @@
                 .total-weight.warning {
                     color: #d9534f;
                     font-weight: bold;
+                }
+                .info-section {
+                    margin-top: 15px;
+                    padding: 12px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    border-left: 4px solid #0066cc;
+                    font-size: 12px;
+                    line-height: 1.6;
+                }
+                .info-section h4 {
+                    margin-top: 0;
+                    margin-bottom: 10px;
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: #333;
+                }
+                .info-section ul {
+                    margin: 8px 0;
+                    padding-left: 20px;
+                }
+                .info-section li {
+                    margin-bottom: 6px;
+                    color: #555;
+                }
+                .info-section .formula {
+                    background: white;
+                    padding: 8px;
+                    border-radius: 3px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 11px;
+                    margin-top: 8px;
+                    border: 1px solid #ddd;
+                }
+                .info-toggle {
+                    font-size: 11px;
+                    color: #0066cc;
+                    cursor: pointer;
+                    text-decoration: underline;
+                    margin-top: 5px;
+                    display: inline-block;
+                }
+                .info-toggle:hover {
+                    color: #0052a3;
+                }
+                .info-content {
+                    display: none;
+                    margin-top: 10px;
+                }
+                .info-content.show {
+                    display: block;
                 }
             </style>
 
@@ -157,48 +239,106 @@
     <!-- Weight Control Panel -->
     <div id="weight-control-panel" class="weight-control-panel" style="display: none;">
         <h3>Adjust Need Score Weights</h3>
+        
         <div class="weight-control">
-            <label for="weight-income">Income (Lower = Higher Need)</label>
-            <input type="range" id="weight-income" min="0" max="1" step="0.01" value="0.2">
-            <div class="value-display">
-                <span>Weight:</span>
-                <span id="weight-income-value">0.20</span>
+            <label for="weight-income">
+                Income (Lower = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('income-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="income-info">
+                <strong>Median Household Income</strong> from U.S. Census Bureau. Lower income areas have higher healthcare need. The value is normalized (0-1 scale) where 1 represents the lowest income areas (highest need).
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="income" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-income-value">0.20</div>
+                <button class="weight-button increment" data-weight="income" data-action="increment">+</button>
             </div>
         </div>
+        
         <div class="weight-control">
-            <label for="weight-population">Population (Higher = Higher Need)</label>
-            <input type="range" id="weight-population" min="0" max="1" step="0.01" value="0.2">
-            <div class="value-display">
-                <span>Weight:</span>
-                <span id="weight-population-value">0.20</span>
+            <label for="weight-population">
+                Population (Higher = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('population-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="population-info">
+                <strong>Total Population</strong> from U.S. Census Bureau. Areas with higher population density have greater healthcare need due to larger service demand. The value is normalized (0-1 scale) where 1 represents the most populous areas.
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="population" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-population-value">0.20</div>
+                <button class="weight-button increment" data-weight="population" data-action="increment">+</button>
             </div>
         </div>
+        
         <div class="weight-control">
-            <label for="weight-chronic-disease">Chronic Disease (Higher = Higher Need)</label>
-            <input type="range" id="weight-chronic-disease" min="0" max="1" step="0.01" value="0.2">
-            <div class="value-display">
-                <span>Weight:</span>
-                <span id="weight-chronic-disease-value">0.20</span>
+            <label for="weight-chronic-disease">
+                Chronic Disease (Higher = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('chronic-disease-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="chronic-disease-info">
+                <strong>Chronic Disease Prevalence</strong> from CDC PLACES data. Average of seven chronic conditions: diabetes, high cholesterol, coronary heart disease, asthma, COPD, obesity, and high blood pressure. Higher prevalence indicates greater healthcare need. Normalized to 0-1 scale.
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="chronicDisease" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-chronic-disease-value">0.20</div>
+                <button class="weight-button increment" data-weight="chronicDisease" data-action="increment">+</button>
             </div>
         </div>
+        
         <div class="weight-control">
-            <label for="weight-provider-access">Provider Access (More = Lower Need)</label>
-            <input type="range" id="weight-provider-access" min="0" max="1" step="0.01" value="0.2">
-            <div class="value-display">
-                <span>Weight:</span>
-                <span id="weight-provider-access-value">0.20</span>
+            <label for="weight-provider-access">
+                Provider Access (More = Lower Need)
+                <span class="info-toggle" onclick="toggleInfo('provider-access-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="provider-access-info">
+                <strong>Healthcare Provider Count</strong> from NPI (National Provider Identifier) Registry. Total number of healthcare providers (individual and organizational) per ZCTA. More providers mean better access and lower need. The value is normalized and inverted (0-1 scale) where 1 represents areas with the fewest providers (highest need).
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="providerAccess" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-provider-access-value">0.20</div>
+                <button class="weight-button increment" data-weight="providerAccess" data-action="increment">+</button>
             </div>
         </div>
+        
         <div class="weight-control">
-            <label for="weight-insurance-access">Insurance Access (Less = Higher Need)</label>
-            <input type="range" id="weight-insurance-access" min="0" max="1" step="0.01" value="0.2">
-            <div class="value-display">
-                <span>Weight:</span>
-                <span id="weight-insurance-access-value">0.20</span>
+            <label for="weight-insurance-access">
+                Insurance Access (Less = Higher Need)
+                <span class="info-toggle" onclick="toggleInfo('insurance-access-info')">ℹ️ What is this?</span>
+            </label>
+            <div class="info-content" id="insurance-access-info">
+                <strong>Uninsured Rate</strong> from CDC PLACES data. Percentage of adults aged 18-64 without health insurance. Higher uninsured rates indicate greater healthcare access barriers and higher need. The value is normalized (0-1 scale) where 1 represents the highest uninsured rates (highest need).
+            </div>
+            <div class="weight-control-buttons">
+                <button class="weight-button decrement" data-weight="insuranceAccess" data-action="decrement">−</button>
+                <div class="weight-value-display" id="weight-insurance-access-value">0.20</div>
+                <button class="weight-button increment" data-weight="insuranceAccess" data-action="increment">+</button>
             </div>
         </div>
+        
         <div class="total-weight" id="total-weight-display">Total: 1.00</div>
         <button class="reset-button" id="reset-weights">Reset to Default</button>
+        
+        <div class="info-section">
+            <h4>How Need Score is Calculated</h4>
+            <p>The healthcare need score is a weighted composite of five factors:</p>
+            <ul>
+                <li><strong>Income:</strong> Median household income (inverted - lower income = higher need)</li>
+                <li><strong>Population:</strong> Total population (higher population = higher need)</li>
+                <li><strong>Chronic Disease:</strong> Average prevalence of chronic conditions (diabetes, asthma, COPD, obesity, etc.)</li>
+                <li><strong>Provider Access:</strong> Number of healthcare providers per ZCTA (inverted - more providers = lower need)</li>
+                <li><strong>Insurance Access:</strong> Percentage without health insurance (higher uninsured rate = higher need)</li>
+            </ul>
+            <div class="formula">
+                need_score = (Weight_Income × Z_Income) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_Population × Z_Population) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_ChronicDisease × Z_ChronicDisease) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_ProviderAccess × Z_ProviderAccess) +<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight_InsuranceAccess × Z_InsuranceAccess)
+            </div>
+            <p style="margin-top: 8px; font-size: 11px; color: #666;">
+                <strong>Note:</strong> All variables (Z_ prefix) are normalized to a 0-1 scale. Higher scores indicate greater healthcare need. The map uses quantile classification (5 bins) to assign colors: Green (low need) → Yellow (medium) → Red (high need).
+            </p>
+        </div>
     </div>
     
             <div class="folium-map" id="map_9c42ff95ad7ee689c0eba5f2489ca809" ></div>
@@ -425,7 +565,7 @@
 
     color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.svg = d3.select(".legend.leaflet-control").append("svg")
         .attr("id", 'legend')
-        .attr("width", 450)
+        .attr("width", 40)
         .attr("height", 40);
 
     color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.g = color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.svg.append("g")
@@ -527,6 +667,7 @@
         }
         
         // Get color for a score based on quantiles
+        // Green (low need) -> Yellow (medium) -> Red (high need)
         function getColorForScore(score, quantiles, colorScale) {
             var colorIndex = 0;
             for (var i = 0; i < quantiles.length; i++) {
@@ -536,7 +677,10 @@
                     break;
                 }
             }
-            var colors = ['#fff7ec', '#fdd49e', '#fc8d59', '#d7301f', '#7f0000'];
+            // Color scheme: Green (low need, index 0) -> Yellow (medium) -> Red (high need, index 4)
+            // 5 quantile bins: green (lowest scores), light green, yellow, red, dark red (highest scores)
+            var colors = ['#2d5016', '#6b9e3e', '#ffeb3b', '#f44336', '#c62828'];
+            // colorIndex 0 = lowest scores (green), colorIndex 4 = highest scores (dark red)
             return colors[Math.min(colorIndex, colors.length - 1)];
         }
         
@@ -610,7 +754,9 @@
                 .attr("fill", "black")
                 .attr("transform", "translate(25,16)");
             
-            var colors = ['#fff7ec', '#fdd49e', '#fc8d59', '#d7301f', '#7f0000'];
+            // Color scheme: Green (low need) -> Yellow (medium) -> Red (high need)
+            // Order: lowest scores (green) to highest scores (dark red)
+            var colors = ['#2d5016', '#6b9e3e', '#ffeb3b', '#f44336', '#c62828'];
             color_map_67cc4aadc9d1fe4ea2b7e619c3ffab9d.g.selectAll("rect")
                 .data(colors.map(function(d, i) {
                     return {
@@ -651,45 +797,32 @@
             }
         }
         
-        // Weight slider event handlers
-        document.getElementById('weight-income').addEventListener('input', function(e) {
-            currentWeights.income = parseFloat(e.target.value);
+        // Update weight value with constraints
+        function updateWeight(weightName, delta) {
+            var step = 0.05; // Increment/decrement by 0.05
+            var newValue = currentWeights[weightName] + (delta * step);
+            // Clamp between 0 and 1
+            newValue = Math.max(0, Math.min(1, newValue));
+            // Round to 2 decimal places
+            newValue = Math.round(newValue * 100) / 100;
+            currentWeights[weightName] = newValue;
             updateWeightDisplay();
             updateMapWithWeights(currentWeights);
-        });
+        }
         
-        document.getElementById('weight-population').addEventListener('input', function(e) {
-            currentWeights.population = parseFloat(e.target.value);
-            updateWeightDisplay();
-            updateMapWithWeights(currentWeights);
-        });
-        
-        document.getElementById('weight-chronic-disease').addEventListener('input', function(e) {
-            currentWeights.chronicDisease = parseFloat(e.target.value);
-            updateWeightDisplay();
-            updateMapWithWeights(currentWeights);
-        });
-        
-        document.getElementById('weight-provider-access').addEventListener('input', function(e) {
-            currentWeights.providerAccess = parseFloat(e.target.value);
-            updateWeightDisplay();
-            updateMapWithWeights(currentWeights);
-        });
-        
-        document.getElementById('weight-insurance-access').addEventListener('input', function(e) {
-            currentWeights.insuranceAccess = parseFloat(e.target.value);
-            updateWeightDisplay();
-            updateMapWithWeights(currentWeights);
+        // Weight button event handlers
+        document.querySelectorAll('.weight-button').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                var weightName = this.getAttribute('data-weight');
+                var action = this.getAttribute('data-action');
+                var delta = action === 'increment' ? 1 : -1;
+                updateWeight(weightName, delta);
+            });
         });
         
         // Reset button
         document.getElementById('reset-weights').addEventListener('click', function() {
             currentWeights = JSON.parse(JSON.stringify(defaultWeights));
-            document.getElementById('weight-income').value = defaultWeights.income;
-            document.getElementById('weight-population').value = defaultWeights.population;
-            document.getElementById('weight-chronic-disease').value = defaultWeights.chronicDisease;
-            document.getElementById('weight-provider-access').value = defaultWeights.providerAccess;
-            document.getElementById('weight-insurance-access').value = defaultWeights.insuranceAccess;
             updateWeightDisplay();
             updateMapWithWeights(currentWeights);
         });
@@ -711,8 +844,57 @@
         var weightControl = new WeightControl({position: 'topleft'});
         weightControl.addTo(map_9c42ff95ad7ee689c0eba5f2489ca809);
         
+        // Toggle info sections
+        function toggleInfo(infoId) {
+            var infoContent = document.getElementById(infoId);
+            if (infoContent) {
+                infoContent.classList.toggle('show');
+            }
+        }
+        // Make toggleInfo available globally
+        window.toggleInfo = toggleInfo;
+        
         // Initialize weight display
         updateWeightDisplay();
+        
+        // Apply initial color scheme (red-yellow-green) to the map
+        function applyInitialColorScheme() {
+            if (originalFeatures.length === 0) return;
+            
+            // Get all current need_score values
+            var scores = [];
+            originalFeatures.forEach(function(feature) {
+                if (feature.properties.need_score !== undefined) {
+                    scores.push(feature.properties.need_score);
+                }
+            });
+            
+            if (scores.length === 0) return;
+            
+            // Calculate quantiles
+            var quantiles = calculateQuantiles(scores, 5);
+            var minScore = Math.min.apply(null, scores);
+            var maxScore = Math.max.apply(null, scores);
+            
+            // Update colors for all features
+            originalFeatures.forEach(function(featureData) {
+                if (featureData.layer && featureData.properties.need_score !== undefined) {
+                    var score = featureData.properties.need_score;
+                    var color = getColorForScore(score, quantiles, null);
+                    
+                    // Update layer style
+                    featureData.layer.setStyle({
+                        color: 'white',
+                        fillColor: color,
+                        fillOpacity: 0.7,
+                        weight: 1
+                    });
+                }
+            });
+            
+            // Update legend
+            updateLegend(minScore, maxScore, quantiles);
+        }
         
         // Extract features - try multiple times to ensure data is loaded
         function tryExtractFeatures(attempts) {
@@ -724,6 +906,10 @@
                 }, 200);
             } else if (featuresExtracted) {
                 console.log('Features successfully extracted');
+                // Apply color scheme once features are extracted
+                setTimeout(function() {
+                    applyInitialColorScheme();
+                }, 100);
             } else {
                 console.warn('Could not extract features after multiple attempts');
             }
@@ -736,6 +922,10 @@
         map_9c42ff95ad7ee689c0eba5f2489ca809.whenReady(function() {
             setTimeout(function() {
                 extractFeatures();
+                // Apply color scheme once features are extracted
+                if (featuresExtracted && originalFeatures.length > 0) {
+                    applyInitialColorScheme();
+                }
             }, 500);
         });
     })();
