@@ -233,11 +233,39 @@
                     </style>
             
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script>
+        function adjustWeights(weightControls, changedIndex, newValue) {
+            let total = weightControls.reduce((sum, control) => sum + control.value, 0);
+            let excess = total - 1;
+
+            if (excess > 0) {
+                let remainingIndices = weightControls.map((_, index) => index).filter(index => index !== changedIndex);
+                let remainingTotal = remainingIndices.reduce((sum, index) => sum + weightControls[index].value, 0);
+
+                remainingIndices.forEach(index => {
+                    let proportion = weightControls[index].value / remainingTotal;
+                    weightControls[index].value -= proportion * excess;
+                });
+            }
+        }
+
+        document.querySelectorAll('.weight-control').forEach((control, index, controls) => {
+            let input = control.querySelector('input');
+            input.addEventListener('change', () => {
+                let newValue = parseFloat(input.value);
+                adjustWeights(controls.map(c => ({ value: parseFloat(c.querySelector('input').value) })), index, newValue);
+                controls.forEach((c, i) => {
+                    c.querySelector('input').value = controls[i].value.toFixed(2);
+                });
+                document.getElementById('total-weight-display').textContent = `Total: ${controls.reduce((sum, c) => sum + parseFloat(c.querySelector('input').value), 0).toFixed(2)}`;
+            });
+        });
+    </script>
 </head>
 <body>
     
     <!-- Weight Control Panel -->
-    <div id="weight-control-panel" class="weight-control-panel" style="display: none;">
+    <div id="weight-control-panel" class="weight-control-panel" style="display: none; width: 120px;">
         <h3>Adjust Need Score Weights</h3>
         
         <div class="weight-control">
