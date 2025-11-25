@@ -24,7 +24,7 @@
         }
         main {
             padding: 20px;
-            max-width: 800px;
+            max-width: 900px;
             margin: auto;
             background: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -65,12 +65,13 @@
         }
         .developer {
             text-align: center;
-            max-width: 250px;
+            max-width: 300px;
             background: #f4f4f4;
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex: 1;
         }
         .developer:hover {
             transform: translateY(-10px);
@@ -92,6 +93,12 @@
         }
         a:hover {
             text-decoration: underline;
+        }
+
+        .developers {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -150,19 +157,19 @@
         <h2>Meet the Developers</h2>
         <div class="developers">
             <div class="developer">
-                <img src="/Users/unnatiagarwal/Documents/Semester_3/BMI 540/AZEquiScope/Images/Ainsley.jpeg" alt="Ainsley Atherton" class="developer-photo">
+                <img src="Images/Ainsley.jpeg" alt="Ainsley Atherton" class="developer-photo">
                 <h3>Ainsley Atherton</h3>
                 <p>Ainsley Atherton is a Biomedical Informatics Ph.D. student and Graduate Teaching Assistant at Arizona State University with extensive experience in bioinformatics research, data integration, and computational modeling. Her work spans viral phylogeography, metagenomic data analysis, and healthcare data systems design, contributing to projects at the intersection of public health and informatics innovation.
                 </p>
             </div>
             <div class="developer">
-                <img src="/Users/unnatiagarwal/Documents/Semester_3/BMI 540/AZEquiScope/Images/Emma.jpeg" alt="Emma Stinson" class="developer-photo">
+                <img src="Images/Emma.jpeg" alt="Emma Stinson" class="developer-photo">
                 <h3>Emma Stinson</h3>
                 <p>Emma J. Stinson is a statistician at the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and a PhD student in Biomedical Informatics and Data Science at ASU, with a master’s in Biostatistics & Epidemiology. She specializes in advanced statistical modeling, reproducible analysis pipelines (R/SAS), and translational research on metabolic determinants of health, bringing strong expertise in study design, coding best practices, and mentorship to interdisciplinary teams.
                 </p>
             </div>
             <div class="developer">
-                <img src="/Users/unnatiagarwal/Documents/Semester_3/BMI 540/AZEquiScope/Images/Unnati.png" alt="Unnati Agarwal" class="developer-photo">
+                <img src="Images/Unnati.png" alt="Unnati Agarwal" class="developer-photo">
                 <h3>Unnati Agarwal</h3>
                 <p>Unnati Agarwal is a Research Assistant at Mayo Clinic and a Master’s candidate in Biomedical Informatics & Data Science at Arizona State University, with a Bachelor's in Technology in Biotechnology and hands-on experience in Medical image analysis, computational biology, and biomedical data analysis. She brings the knowledge in applied data analytics—skilled in PowerBI, SQL, Python, and reproducible workflows—focused on translating genomic and imaging data into actionable public-health and clinical insights.
                 </p>
