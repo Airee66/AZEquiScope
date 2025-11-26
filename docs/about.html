@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,7 +101,20 @@
             flex-wrap: nowrap;
             justify-content: space-between;
         }
+        .diagram-card {
+            margin: 24px 0;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f7fafc;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        }
     </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        mermaid.initialize({ startOnLoad: true, theme: "base", securityLevel: "loose" });
+      });
+    </script>
 </head>
 <body>
     <!-- Page header + Navbar (left-aligned) -->
@@ -149,11 +163,34 @@
             <li><strong>ProviderAccess_Scaled:</strong> Standardized count of healthcare providers (individual and organizational) from the NPI Registry, inverted so fewer providers indicate higher need.</li>
             <li><strong>InsuranceAccess_Scaled:</strong> Standardized percentage of uninsured individuals, inverted so lower insurance access indicates higher need.</li>
         </ul>
+
+        <div class="diagram-card">
+          <h2 style="color:#4CAF50;">Activity Flow</h2>
+          <div class="mermaid">
+            graph LR
+                U1[User opens AZEquiScope] --> F1[Front-end loads page]
+                F1 --> F2[Fetch indicator + GeoJSON data]
+                F2 --> D1[Data layer]
+                D1 --> F3{Data OK?}
+
+                F3 -->|Yes| M1[Render map + default Need Scores]
+                F3 -->|No| E1[Display error]
+
+                U2[User adjusts sliders] --> W1[Capture weights]
+                W1 --> W2[Send to scoring engine]   
+                W2 --> S1[Validate + normalize]
+                S1 --> S2[Recalculate Need Scores]
+                S2 --> F4[Update map + legend]
+                F4 --> U3[User sees updated scores]
+          </div>
+        </div>
+
         <p>All variables are standardized using min-max scaling to ensure values range from 0 to 1.</p>
         <p>
           Created by <em>Ainsley Atherton, Emma Stinson, & Unnati Agarwal </em> · Arizona State University.  
           <a href="https://github.com/ainsleyree/clinic-need-dashboard" target="_blank">View on GitHub</a>
         </p>
+        
         <h2>Meet the Developers</h2>
         <div class="developers">
             <div class="developer">
